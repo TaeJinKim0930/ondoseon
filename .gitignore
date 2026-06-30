@@ -1,0 +1,6 @@
+# 로컬/세션 전용 (배포 불필요)
+.claude/
+*.log
+.DS_Store
+Thumbs.db
+ondoseon-result.png

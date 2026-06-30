@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>온도썬 — 우리 온도 몇 도일까?</title>
+<meta name="description" content="썸~연애초반, 둘이 풀고 비교하는 가치관 궁합 테스트. 잘 맞는 점과 맞춰갈 점을 온도로 알려줘요." />
+<meta property="og:title" content="우리 온도 몇 도일까? | 온도썬" />
+<meta property="og:description" content="썸~연애초반, 둘이 풀고 비교하는 가치관 궁합 테스트. 잘 맞는 점과 맞춰갈 점을 온도로 알려줘요." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<main class="app" id="app">
+
+  <!-- 랜딩 -->
+  <section id="screen-landing" class="screen active" aria-label="시작">
+    <div class="hero">
+      <div class="therm-deco" aria-hidden="true">🌡️</div>
+      <span class="badge">썸~연애초반 궁합</span>
+      <h1>우리 지금,<br>몇 도쯤일까?</h1>
+      <p class="sub">20개 질문이면 충분해.<br>가치관으로 보는 우리 둘의 온도.</p>
+      <div class="meta-row"><span>⏱️ 약 2분</span><span>·</span><span>📝 20문항</span></div>
+      <button class="btn" id="btn-start">테스트 시작하기</button>
+      <details class="privacy">
+        <summary>🔒 답은 저장될까요?</summary>
+        <p id="privacy-long"></p>
+      </details>
+    </div>
+  </section>
+
+  <!-- 초대(B 진입) -->
+  <section id="screen-invite" class="screen" aria-label="초대">
+    <div class="center-card">
+      <div class="big" aria-hidden="true">💌</div>
+      <h1>누가 너한테<br>궁합을 물어보고 있어</h1>
+      <p class="sub">상대는 이미 다 풀었어.<br>너도 풀면 둘의 온도가 나와.</p>
+      <div style="margin-top:30px"><button class="btn" id="btn-invite-start">나도 풀어보기</button></div>
+    </div>
+  </section>
+
+  <!-- 퀴즈 -->
+  <section id="screen-quiz" class="screen" aria-label="질문">
+    <div class="q-count" id="q-count"></div>
+    <div class="progress"><i id="q-progress"></i></div>
+    <span class="q-cat" id="q-cat"></span>
+    <p class="q-prompt" id="q-prompt"></p>
+    <div class="choices">
+      <button class="choice" id="choice-a" data-val="0"><span class="mark">A</span><span class="txt"></span></button>
+      <button class="choice" id="choice-b" data-val="1"><span class="mark">B</span><span class="txt"></span></button>
+    </div>
+    <div class="q-nav"><button id="q-back">← 이전</button><span></span></div>
+  </section>
+
+  <!-- MBTI -->
+  <section id="screen-mbti" class="screen" aria-label="MBTI 입력">
+    <h2>MBTI 알면 더 디테일하게 봐줄게</h2>
+    <p class="sub" style="margin-bottom:20px">몰라도 괜찮아 — 건너뛰면 점수엔 영향 없어.</p>
+    <div id="mbti-axes"></div>
+    <button class="btn" id="btn-mbti-done" style="margin-top:18px">결과 보기</button>
+    <button class="btn ghost" id="btn-mbti-skip" style="margin-top:9px">MBTI 없이 결과 보기</button>
+  </section>
+
+  <!-- 솔로 결과 -->
+  <section id="screen-solo" class="screen" aria-label="내 성향">
+    <div style="text-align:center;padding:14px 0 6px">
+      <div style="font-size:2.2rem" aria-hidden="true">🌤️</div>
+      <h1 style="margin-top:8px">내 연애 온도 카드</h1>
+      <p class="sub">혼자선 미완성! 상대가 풀어야 진짜 온도가 나와.</p>
+    </div>
+    <div id="solo-traits" style="margin:22px 0"></div>
+    <button class="btn" id="btn-share-invite">💌 상대에게 보내고 같이 보기</button>
+    <button class="btn ghost" id="btn-copy-invite" style="margin-top:9px">🔗 초대 링크 복사</button>
+    <p class="caption" id="solo-note" style="text-align:center;margin-top:16px"></p>
+  </section>
+
+  <!-- 공동 결과 -->
+  <section id="screen-result" class="screen" aria-label="공동 결과">
+    <div id="result-body"></div>
+    <div class="btn-group">
+      <button class="btn row" id="btn-save-img">📸 결과 카드 저장</button>
+      <button class="btn row ghost" id="btn-share-result">🔗 공유</button>
+    </div>
+    <button class="btn ghost" id="btn-restart" style="margin-top:9px">나도 새로 해보기</button>
+    <p class="caption" id="result-privacy" style="text-align:center;margin-top:12px"></p>
+    <p class="disclaimer" id="result-disclaimer"></p>
+  </section>
+
+  <!-- 에러 -->
+  <section id="screen-error" class="screen" aria-label="오류">
+    <div class="center-card">
+      <div class="big" aria-hidden="true">🥲</div>
+      <h2 id="error-msg"></h2>
+      <div style="margin-top:26px"><button class="btn" id="btn-error-restart">처음부터 하기</button></div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="capture-canvas" width="1080" height="1920"></canvas>
+</main>
+<script src="js/data.js"></script>
+<script src="js/codec.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/report.js"></script>
+<script src="js/capture.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
