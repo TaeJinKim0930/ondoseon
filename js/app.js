@@ -236,7 +236,14 @@ function bindEvents() {
   $("btn-share-invite").addEventListener("click", shareInvite);
   $("btn-copy-invite").addEventListener("click", () => copy(`${shareLinkBase()}?p=${state.myToken}`));
   $("btn-share-result").addEventListener("click", shareResult);
-  $("btn-save-img").addEventListener("click", async () => { toast("이미지 만드는 중..."); await saveCard(state.lastReport); toast("저장됐어요!"); });
+  $("btn-save-img").addEventListener("click", async () => {
+    toast("이미지 만드는 중...");
+    const r = await saveCard(state.lastReport);
+    if (r === "shared") toast("저장 완료!");
+    else if (r === "download") toast("이미지를 내려받았어요");
+    else if (r === "preview") toast("아래 이미지를 꾹 눌러 저장하세요");
+    else if (r === "error") toast("이미지를 만들지 못했어요");
+  });
   const goHome = () => { const base = shareLinkBase(); if (location.href === base) location.reload(); else location.href = base; };
   $("btn-restart").addEventListener("click", goHome);
   $("btn-error-restart").addEventListener("click", goHome);

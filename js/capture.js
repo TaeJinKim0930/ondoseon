@@ -93,14 +93,48 @@ async function saveCard(report) {
     await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 3000))]);
   }
   const cv = drawCard(report);
-  return new Promise((resolve) => {
-    cv.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "ondoseon-result.png";
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      resolve();
-    }, "image/png");
-  });
+  const blob = await new Promise((res) => cv.toBlob(res, "image/png"));
+  if (!blob) return "error";
+  const file = new File([blob], "ondoseon.png", { type: "image/png" });
+
+  // 1) 모바일(아이폰/안드로이드): 파일 공유 시트 → "이미지 저장"으로 앨범에 저장
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: "온도썬 결과" }); return "shared"; }
+    catch (e) { if (e && e.name === "AbortError") return "cancel"; /* 그 외엔 폴백 */ }
+  }
+
+  // 2) 데스크톱: 다운로드 폴더로 저장
+  const url = URL.createObjectURL(blob);
+  let downloaded = false;
+  try {
+    const a = document.createElement("a");
+    a.href = url; a.download = "ondoseon-result.png";
+    document.body.appendChild(a); a.click(); a.remove();
+    downloaded = true;
+  } catch (e) { /* 폴백으로 */ }
+
+  // 3) 항상 인페이지 이미지로도 띄워줌 → 모바일에서 꾹 눌러 '사진에 추가'(앨범 저장)
+  showImagePreview(url);
+  return downloaded ? "download" : "preview";
+}
+
+function showImagePreview(url) {
+  let box = document.getElementById("imgsave");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "imgsave"; box.className = "imgsave";
+    box.innerHTML = `<p class="hint"></p><img alt="온도썬 결과 카드" /><button type="button" class="btn ghost row" id="imgsave-close">닫기</button>`;
+    document.getElementById("app").appendChild(box);
+    box.querySelector("#imgsave-close").addEventListener("click", () => {
+      const img = box.querySelector("img");
+      if (img && img.src) URL.revokeObjectURL(img.src);
+      box.remove();
+    });
+  }
+  const touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  box.querySelector(".hint").textContent = touch
+    ? "이미지를 꾹 눌러 '사진에 추가'(저장)를 눌러주세요"
+    : "이미지를 우클릭 → '이미지를 다른 이름으로 저장'";
+  box.querySelector("img").src = url;
+  box.scrollIntoView({ behavior: "smooth", block: "center" });
 }

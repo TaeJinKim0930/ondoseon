@@ -136,6 +136,10 @@ details.privacy p{font-size:.83rem;color:var(--ink-sub);margin-top:10px}
 .linkbox p{font-size:.86rem;color:var(--ink-sub);margin-bottom:10px}
 .linkbox input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-size:.85rem;color:var(--ink);background:var(--cream);margin-bottom:10px}
 
+.imgsave{background:var(--paper);border:1.5px solid var(--blush);border-radius:var(--radius);padding:16px;margin-top:16px;text-align:center}
+.imgsave .hint{font-size:.86rem;color:var(--ink-sub);margin-bottom:12px}
+.imgsave img{width:100%;max-width:300px;border-radius:var(--radius-sm);border:1px solid var(--line);margin-bottom:12px}
+
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
 }
