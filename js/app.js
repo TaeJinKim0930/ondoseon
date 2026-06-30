@@ -65,7 +65,9 @@ function showLinkBox(text) {
 
 async function shareOrCopy(link, text) {
   if (navigator.share) {
-    try { await navigator.share({ title: SHARE.ogTitle, text, url: link }); return; }
+    const payload = { title: SHARE.ogTitle, url: link };
+    if (text) payload.text = text;
+    try { await navigator.share(payload); return; }
     catch (e) { if (e && e.name === "AbortError") return; /* 그 외엔 복사로 폴백 */ }
   }
   copy(link);
@@ -215,7 +217,7 @@ function showResult(a, b) {
 
 // ---------- 공유 ----------
 function shareInvite() {
-  shareOrCopy(`${shareLinkBase()}?p=${state.myToken}`, "내 답 맞춰볼래? 우리 온도 재보자");
+  shareOrCopy(`${shareLinkBase()}?p=${state.myToken}`);
 }
 function shareResult() {
   const cap = SHARE.caption[state.lastReport.band] || SHARE.viewAll;
